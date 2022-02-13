@@ -1,45 +1,279 @@
 <html>
   <header>
     <script>
-      kb=[
-        ['あ','','','',''],
-        ['か','','','',''],
-        ['さ','','','',''],
-        ['た','','','',''],
-        ['な','','','',''],
-        ['は','','','',''],
-        ['ま','','','',''],
-        ['や','','','',''],
-        ['ら','','','',''],
-        ['わ','','を','','ん'],
+      let kb_map=[
+        ['あ','い','う','え','お'],
+        ['か','き','く','け','こ'],
+        ['さ','し','す','せ','そ'],
+        ['た','ち','つ','て','と'],
+        ['な','に','ぬ','ね','の'],
+        ['は','ひ','ふ','へ','ほ'],
+        ['ま','み','む','め','も'],
+        ['や','　','ゆ','　','よ'],
+        ['ら','り','る','れ','ろ'],
+        ['わ','　','を','　','ん']
       ];
       
-      onLoad = function(){
+      let curr_row = 1;
+      let curr_char = 0;
+      let tango = "ひきにく";
+      
+      
+      function typeChar(event){
+        var target = event.target;
+        //console.log(target);
+        console.log(target.textContent+curr_row+"-"+curr_char);
+        if(curr_row<7 && curr_char<4){
+          let try_row = document.getElementById("try_"+curr_row);
+          let char_input = try_row.children;
+          char_input[curr_char].innerText = target.textContent;
+          curr_char++;
+          if(curr_char==4)document.getElementById("ok").disabled = false;
+        }
+        
+      }
+      
+      function del(event){
+        if(curr_char>0){
+          curr_char--;
+          let try_row = document.getElementById("try_"+curr_row);
+          let char_input = try_row.children;
+          char_input[curr_char].innerText = "";
+          document.getElementById("ok").disabled = true;
+        }
+        
+      }
+      
+      function setKeyboardClass(ch,cl){
+        for(let i=0;i<5;i++){
+          row = document.getElementById("kb_row_"+(i+1));
+          for(let k=9;k>=0;k--){
+            let key = row.children[k];
+            if(key.innerText==ch){
+              key.classList.remove("somewhere"); 
+              if(!key.classList.contains("exact"))key.classList.add(cl); 
+            }
+          }
+        }
+        
+      }
+      
+      
+      var kana_col={
+        "あ":0,
+        "い":0,
+        "う":0,
+        "え":0,
+        "お":0,
+        "か":1,
+        "き":1,
+        "く":1,
+        "け":1,
+        "こ":1,
+        "さ":2,
+        "し":2,
+        "す":2,
+        "せ":2,
+        "そ":2,
+        "た":3,
+        "ち":3,
+        "つ":3,
+        "て":3,
+        "と":3,
+        "な":4,
+        "に":4,
+        "ぬ":4,
+        "ね":4,
+        "の":4,
+        "は":5,
+        "ひ":5,
+        "ふ":5,
+        "へ":5,
+        "ほ":5,
+        "ま":6,
+        "み":6,
+        "む":6,
+        "め":6,
+        "も":6,
+        "や":7,
+        "ゆ":7,
+        "よ":7,
+        "ら":8,
+        "り":8,
+        "る":8,
+        "れ":8,
+        "ろ":8,
+        "わ":9,
+        "を":9,
+        "ん":9
+        
+      }
+      
+      var kana_row={
+        "く":3
+      }
+      
+      function eval(){
+        let try_row = document.getElementById("try_"+curr_row);
+        let char_input = try_row.children;
+        
+                    
+        
+        for(var i=0;i<4;i++){
+          let guessed_char = char_input[i].innerText;
+          console.log(kana_col[guessed_char]+" =? "+tango[i]);
+
+          if(kana_col[guessed_char]==kana_col[tango[i]]&&guessed_char!=tango[i]){
+            char_input[i].classList.add("same_col");
+          };
+
+          
+          
+          for(var k=0;k<4;k++){
+           if(guessed_char == tango.charAt(k)){
+              setKeyboardClass(guessed_char,i==k?"exact":"somewhere");
+              char_input[i].classList.add(i==k?"exact":"somewhere");
+            }
+          }
+        }
+        curr_row++;
+        curr_char=0;
+        try_row.classList.remove("current_row");
+        document.getElementById("try_"+curr_row).classList.add("current_row");
+        document.getElementById("ok").disabled = true;
+        console.log(curr_row);
+      }
+      
+      function init123(){
         let kb = document.getElementById("keyboard");
         let row = null;
         for(let i=0;i<5;i++){
           row = document.getElementById("kb_row_"+(i+1));
           for(let k=9;k>=0;k--){
             let btn = document.createElement("button");
-            btn.innerHtml = kb[k][i];
-            row.append(btn);
+            btn.innerText = kb_map[k][i];
+            btn.addEventListener("click",typeChar);
+            row.appendChild(btn);
           }
           
         }
       }
       
     </script>
+    <style>
+    :root{
+      --green: #BEC;
+      --blue: #B0E8F8;
+      --blue-dark: #80B8D8;
+      --yellow: #F8F8A0;
+      }
+    
+    #tries > div{
+        text-align: center;
+      }
+      
+    #tries > div >span{
+      width: 12vw;
+      height: 12vw;
+      display: inline-block;
+      border: none;
+      background: #eee;
+      margin: 1px;
+    }
+      #tries > div >span.exact{
+        background: var(--green);
+      }
+      #tries > div >span.somewhere{
+        background: var(--yellow);
+      }
+      #tries > div >span.same_col{
+        background: var(--blue);
+        border-left: 4px solid var(--blue-dark);
+        border-right: 4px solid var(--blue-dark);
+      }
+      
+    #tries > div.current_row >span{
+      border: 1px solid black;
+      background: white;
+    }
+    
+      #keyboard > div{
+        text-align: center;
+      }
+      
+    #keyboard > div >button{
+      width: 9vw;
+      height: 9vw;
+      border: none;
+      margin: 1px;
+      }
+    
+    #keyboard > div >button.exact{
+      background: var(--green);
+      }
+      
+    #keyboard > div >button.somewhere{
+      background: var(--yellow);
+      }
+    </style>
   </header>
-  <body> 
+  <body onload="init123()">
   hello tangol.
-    <div id="hint"></div>
-    <div id="tries"></div>
-    <div id="keyboard">
-      <div class="kb_row_1"> </div>
-      <div class="kb_row_2"> </div>
-      <div class="kb_row_3"> </div>
-      <div class="kb_row_4"> </div>
-      <div class="kb_row_5"> </div>
+    <div id="hint">
+      
     </div>
+    <div id="tries">
+      <div id="try_1" class="current_row">
+        <span> </span>
+        <span> </span>
+        <span> </span>
+        <span> </span>
+      </div>
+      <div id="try_2">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id="try_3">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id="try_4">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id="try_5">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div id="try_6">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div id="keyboard">
+      <div id="kb_row_1"> </div>
+      <div id="kb_row_2"> </div>
+      <div id="kb_row_3"> </div>
+      <div id="kb_row_4"> </div>
+      <div id="kb_row_5"> </div>
+    </div>
+                        
+                        <button id="del" onclick="del()">
+                        del</button>
+                        <button id="ok" onclick="eval()" disabled>
+                        ok</button>
+                        
+                        </div>
+                        </div>
   </body>
 </html>
