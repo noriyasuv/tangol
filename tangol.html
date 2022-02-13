@@ -1,11 +1,45 @@
 <html>
-<header>
-</header>
-<body>
-hello tangol.
-  <div id="hint"></div>
-  <div id="tries"></div>
-  <div id="keyboard"></div>
-    
-</body>
+  <header>
+    <script>
+      kb=[
+        ['あ','','','',''],
+        ['か','','','',''],
+        ['さ','','','',''],
+        ['た','','','',''],
+        ['な','','','',''],
+        ['は','','','',''],
+        ['ま','','','',''],
+        ['や','','','',''],
+        ['ら','','','',''],
+        ['わ','','を','','ん'],
+      ];
+      
+      onLoad = function(){
+        let kb = document.getElementById("keyboard");
+        let row = null;
+        for(let i=0;i<5;i++){
+          row = document.getElementById("kb_row_"+(i+1));
+          for(let k=9;k>=0;k--){
+            let btn = document.createElement("button");
+            btn.innerHtml = kb[k][i];
+            row.append(btn);
+          }
+          
+        }
+      }
+      
+    </script>
+  </header>
+  <body> 
+  hello tangol.
+    <div id="hint"></div>
+    <div id="tries"></div>
+    <div id="keyboard">
+      <div class="kb_row_1"> </div>
+      <div class="kb_row_2"> </div>
+      <div class="kb_row_3"> </div>
+      <div class="kb_row_4"> </div>
+      <div class="kb_row_5"> </div>
+    </div>
+  </body>
 </html>
